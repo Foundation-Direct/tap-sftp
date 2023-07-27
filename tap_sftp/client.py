@@ -155,8 +155,10 @@ class SFTPConnection():
             local_path = f'{tmpdirname}/{os.path.basename(sftp_file_path)}'
             if decryption_configs:
                 LOGGER.info(f'Decrypting file: {sftp_file_path}')
+                LOGGER.info(f'Getting file from SFTP: {sftp_file_path}')
                 # Getting sftp file to local, then reading it is much faster than reading it directly from the SFTP
                 self.sftp.get(sftp_file_path, local_path)
+                LOGGER.info(f'SFTP file downloaded to local: {local_path}')
                 decrypted_path = decrypt.gpg_decrypt(
                     local_path,
                     tmpdirname,

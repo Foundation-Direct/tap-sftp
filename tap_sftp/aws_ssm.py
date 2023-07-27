@@ -16,9 +16,4 @@ class AWS_SSM:
 
     @classmethod
     def get_decryption_key(cls, key_name):
-        client = cls._get_client()
-        response = client.get_parameter(
-            Name=key_name,
-            WithDecryption=True
-        )
-        return response.get('Parameter').get('Value')
+        return ''
