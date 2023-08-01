@@ -154,6 +154,9 @@ class SFTPConnection():
             sftp_file_path = f["filepath"]
             local_path = f'{tmpdirname}/{os.path.basename(sftp_file_path)}'
             if decryption_configs:
+                # remove the .gpg extension from the file path
+                decrypted_sftp_file_path = os.path.splitext(sftp_file_path)[0]
+
                 LOGGER.info(f'Decrypting file: {sftp_file_path}')
                 LOGGER.info(f'Getting file from SFTP: {sftp_file_path}')
                 # Getting sftp file to local, then reading it is much faster than reading it directly from the SFTP
@@ -171,7 +174,11 @@ class SFTPConnection():
                     self.decrypted_file = open(decrypted_path, 'rb')
                 except FileNotFoundError:
                     raise Exception(f'Decryption of file failed: {sftp_file_path}')
-                return self.decrypted_file, decrypted_path
+                # Instead of returning the decrypted file and local decrypted file path, return the decrypted file and
+                # the sftp decrypted file path. This avoids the randomness of the temp directory, which could affect
+                # the `_sdc_source_file` value. `_sdc_source_file` is used as a key, so it needs to be consistent with
+                # the same input file.
+                return self.decrypted_file, decrypted_sftp_file_path
             else:
                 self.sftp.get(sftp_file_path, local_path)
                 return open(local_path, 'rb')
