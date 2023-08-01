@@ -174,9 +174,10 @@ class SFTPConnection():
                     self.decrypted_file = open(decrypted_path, 'rb')
                 except FileNotFoundError:
                     raise Exception(f'Decryption of file failed: {sftp_file_path}')
-                # return the decrypted file and the sftp decrypted file path instead
-                # of the local decrypted file path to avoid randomness of temp directory
-                # affecting `_sdc_source_file` value
+                # Instead of returning the decrypted file and local decrypted file path, return the decrypted file and
+                # the sftp decrypted file path. This avoids the randomness of the temp directory, which could affect
+                # the `_sdc_source_file` value. `_sdc_source_file` is used as a key, so it needs to be consistent with
+                # the same input file.
                 return self.decrypted_file, decrypted_sftp_file_path
             else:
                 self.sftp.get(sftp_file_path, local_path)
